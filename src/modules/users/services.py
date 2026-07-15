@@ -23,7 +23,7 @@ class UserService:
     
     async def authenticate_user(self, dto: UserLoginRequest) -> TokenResponse:
         user = await self.user_repo.get_by_email(dto.email)
-        if not user or not verify_password(dto.passwword, user.hashed_password):
+        if not user or not verify_password(dto.password, user.hashed_password):
             raise InvalidCredentialsError
         
         token = create_access_token(subject=user.email)

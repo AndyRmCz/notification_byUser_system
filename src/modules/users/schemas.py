@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class UserRegisterRequest(BaseModel):
     email: EmailStr = Field(..., description="Valid user email address", examples=["user@domain.com"])
@@ -6,7 +6,7 @@ class UserRegisterRequest(BaseModel):
 
 class UserLoginRequest(BaseModel):
     email: EmailStr = Field(..., examples=["user@domain.com"])
-    passwword: str = Field(..., examples=["SecurePass123!"])
+    password: str = Field(..., examples=["SecurePass123!"])
 
 class TokenResponse(BaseModel):
     access_token: str = Field(..., description="JWT bearer authentication token", examples=["eyJhbGciOiJIUzI1NiI..."])
@@ -16,5 +16,7 @@ class UserResponse(BaseModel):
     id: str = Field(..., examples=["550e8400-e29b-41d4-a716-446655440000"])
     email: EmailStr = Field(..., examples=["user@domain.com"])
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True, 
+        frozen=True
+    )
