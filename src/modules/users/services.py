@@ -1,8 +1,13 @@
-from src.core.security import get_password_hash, verify_password, create_access_token
+from datetime import timedelta
+from sqlalchemy import func, select
+from fastapi.security import OAuth2PasswordRequestForm
+
+from src.core.security import get_password_hash, verify_password, create_access_token, verify_access_token, password_hash, oauth2_scheme
+from src.config.settings import settings
 from src.modules.users.models import User
 from src.modules.users.schemas import UserRegisterRequest, UserLoginRequest, TokenResponse, UserResponse
 from src.modules.users.repositories import IUserRepository
-from src.modules.users.exceptions import UserAlreadyExistsError, InvalidCredentialsError
+from src.modules.users.exceptions import UserAlreadyExistsError, InvalidCredentialsError, UserNotFoundError
 
 class UserService:
     def __init__(self, user_repo: IUserRepository):
@@ -14,7 +19,7 @@ class UserService:
             raise UserAlreadyExistsError(dto.email)
         
         user = User(
-            email = dto.email,
+            email = dto.email.lower(),
             hashed_password= get_password_hash(dto.password)
         )
 
@@ -24,7 +29,11 @@ class UserService:
     async def authenticate_user(self, dto: UserLoginRequest) -> TokenResponse:
         user = await self.user_repo.get_by_email(dto.email)
         if not user or not verify_password(dto.password, user.hashed_password):
-            raise InvalidCredentialsError
-        
+            raise InvalidCredentialsError()
+
         token = create_access_token(subject=user.email)
         return TokenResponse(access_token=token)
+    
+    async def get_authenticated_user(self, user_id: str) ->UserResponse:
+        return await self.user_repo.get_by_id(user_id)
+

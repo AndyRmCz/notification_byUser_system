@@ -4,7 +4,7 @@ from typing import AsyncGenerator
 from httpx import AsyncClient #, ASGILifespan
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-from src.main import app
+from main import app
 from src.config.database import Base
 from src.dependencies.database import get_db_session
 # from src.dependencies.providers import get_current_user
