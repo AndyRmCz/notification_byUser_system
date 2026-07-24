@@ -13,7 +13,7 @@ from src.modules.users.models import User
 from src.modules.users.controllers import get_current_user
 from src.config.settings import settings
 
-TEST_DATABASE_URL = settings.DATABASE_URL
+TEST_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/usersdb_test"
 
 @pytest_asyncio.fixture(scope="function")
 async def test_db_session() -> AsyncGenerator[AsyncSession, None]:
