@@ -31,7 +31,11 @@ class UserService:
         if not user or not verify_password(dto.password, user.hashed_password):
             raise InvalidCredentialsError()
 
-        token = create_access_token(subject=user.email)
+        access_token_expires = timedelta(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        token = create_access_token(
+            data={"sub": str(user.id)},
+            expires_delta=access_token_expires
+        )
         return TokenResponse(access_token=token)
     
     async def get_authenticated_user(self, user_id: str) ->UserResponse:

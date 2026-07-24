@@ -1,7 +1,7 @@
 import pytest
 import pytest_asyncio
 from typing import AsyncGenerator
-from httpx import AsyncClient #, ASGILifespan
+from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from main import app
@@ -10,8 +10,10 @@ from src.dependencies.database import get_db_session
 # from src.dependencies.providers import get_current_user
 from src.core.security import get_password_hash
 from src.modules.users.models import User
+from src.modules.users.controllers import get_current_user
+from src.config.settings import settings
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:" ## Change later for Docker test db
+TEST_DATABASE_URL = settings.DATABASE_URL
 
 @pytest_asyncio.fixture(scope="function")
 async def test_db_session() -> AsyncGenerator[AsyncSession, None]:
@@ -33,7 +35,7 @@ async def seed_user(test_db_session: AsyncSession) -> User:
     user = User(
         id="user-test-id-123",
         email="developer@test.com",
-        hashed_password="SecretPassword123"
+        hashed_password=get_password_hash("SecretPassword123")
     )
     test_db_session.add(user)
     await test_db_session.commit()
@@ -49,9 +51,10 @@ async def client(test_db_session: AsyncSession, seed_user: User) -> AsyncGenerat
         return seed_user
 
     app.dependency_overrides[get_db_session] = _override_db
-    # app.dependency_overrides[get_current_user] = _override_current_user
+    app.dependency_overrides[get_current_user] = _override_current_user
 
-    # async with AsyncClient(transport=ASGILifespan(app), base_url="http://testserver") as ac:
-    #     yield ac
+    
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://localhost:8000") as ac:
+        yield ac
 
     app.dependency_overrides.clear()

@@ -35,6 +35,7 @@ async def register(
 @router.post(
     "/login",
     response_model=TokenResponse,
+    status_code=status.HTTP_200_OK,
     summary="Authenticate user",
     description="Validates credentials and returns an access token",
 )
@@ -89,7 +90,7 @@ async def login_for_access_token(
     )
     user = result.scalars().first()
 
-    if not user or verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorret email or password",

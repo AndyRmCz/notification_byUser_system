@@ -21,7 +21,7 @@ class NotificationService:
             user_id=user_id
         )
         saved = await self.repository.create(notification)
-        return NotificationResponse.model_validate(saved)
+        return saved #NotificationResponse.model_validate(saved)
 
     async def get_user_notifications(self, user_id: str) -> list[NotificationResponse]:
         records = await self.repository.list_by_user(user_id)
