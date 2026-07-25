@@ -1,7 +1,7 @@
 services:
   api:
     command: >
-        sh -c "pytest"
+        sh -c "python -m pytest"
     depends_on:
       - db
     ports:
