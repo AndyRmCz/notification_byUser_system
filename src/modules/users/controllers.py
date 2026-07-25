@@ -5,11 +5,21 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
 from src.dependencies.providers import get_user_service
-from src.modules.users.schemas import UserLoginRequest, UserRegisterRequest, UserResponse, TokenResponse
+from src.modules.users.schemas import (
+    UserLoginRequest,
+    UserRegisterRequest,
+    UserResponse,
+    TokenResponse,
+)
 from src.modules.users.services import UserService
 
-from sqlalchemy import func, select
-from src.core.security import create_access_token, password_hash, oauth2_scheme, verify_access_token, verify_password
+from sqlalchemy import select
+from src.core.security import (
+    create_access_token,
+    oauth2_scheme,
+    verify_access_token,
+    verify_password,
+)
 from src.config.settings import settings
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,6 +28,7 @@ from src.modules.users.models import User
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Access"])
+
 
 @router.post(
     "/register",
@@ -32,6 +43,7 @@ async def register(
 ):
     return await service.register_user(dto)
 
+
 @router.post(
     "/login",
     response_model=TokenResponse,
@@ -45,9 +57,10 @@ async def login(
 ):
     return await service.authenticate_user(dto)
 
+
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
-        token:Annotated[str, Depends(oauth2_scheme)],
+        token: Annotated[str, Depends(oauth2_scheme)],
         service: UserService = Depends(get_user_service)
 ):
     user_id = verify_access_token(token)
@@ -57,7 +70,7 @@ async def get_current_user(
             detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    
+
     # try:
     #     user_id_int = int(user_id)
     # except (TypeError, ValueError):
@@ -75,8 +88,9 @@ async def get_current_user(
             detail="User not found",
             headers={"WWW_Authenticate": "Bearer"},
         )
-    
+
     return user
+
 
 @router.post("/token", response_model=TokenResponse)
 async def login_for_access_token(
@@ -96,7 +110,7 @@ async def login_for_access_token(
             detail="Incorret email or password",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    
+
     access_token_expires = timedelta(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": str(user.id)},

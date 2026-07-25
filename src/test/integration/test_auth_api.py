@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 from fastapi import status
 
+
 @pytest.mark.asyncio
 async def test_auth_register_api(client: AsyncClient):
     response = await client.post(
@@ -10,6 +11,7 @@ async def test_auth_register_api(client: AsyncClient):
     )
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["email"] == "fresh@domain.com"
+
 
 @pytest.mark.asyncio
 async def test_auth_login_api(client: AsyncClient):

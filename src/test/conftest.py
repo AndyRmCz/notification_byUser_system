@@ -1,4 +1,4 @@
-import pytest
+# import pytest
 import pytest_asyncio
 from typing import AsyncGenerator
 from httpx import AsyncClient, ASGITransport
@@ -11,14 +11,16 @@ from src.dependencies.database import get_db_session
 from src.core.security import get_password_hash
 from src.modules.users.models import User
 from src.modules.users.controllers import get_current_user
-from src.config.settings import settings
 
 TEST_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/usersdb_test"
+
 
 @pytest_asyncio.fixture(scope="function")
 async def test_db_session() -> AsyncGenerator[AsyncSession, None]:
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)
-    session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    session_factory = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -29,6 +31,7 @@ async def test_db_session() -> AsyncGenerator[AsyncSession, None]:
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+
 
 @pytest_asyncio.fixture(scope="function")
 async def seed_user(test_db_session: AsyncSession) -> User:
@@ -42,8 +45,11 @@ async def seed_user(test_db_session: AsyncSession) -> User:
     await test_db_session.refresh(user)
     return user
 
+
 @pytest_asyncio.fixture(scope="function")
-async def client(test_db_session: AsyncSession, seed_user: User) -> AsyncGenerator[AsyncClient, None]:
+async def client(
+    test_db_session: AsyncSession, seed_user: User
+) -> AsyncGenerator[AsyncClient, None]:
     async def _override_db():
         yield test_db_session
 
@@ -53,8 +59,9 @@ async def client(test_db_session: AsyncSession, seed_user: User) -> AsyncGenerat
     app.dependency_overrides[get_db_session] = _override_db
     app.dependency_overrides[get_current_user] = _override_current_user
 
-    
-    async with AsyncClient(transport=ASGITransport(app), base_url="http://localhost:8000") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app), base_url="http://localhost:8000"
+    ) as ac:
         yield ac
 
     app.dependency_overrides.clear()

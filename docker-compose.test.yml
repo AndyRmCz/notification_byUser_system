@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/usersdb_test
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/usersdb_test
       - SECRET_KEY=12aea35700b2a225ee9364131d9d5fbb6de89bb038a660b66c4889a0a44adf05
   db:
     image: postgres:15

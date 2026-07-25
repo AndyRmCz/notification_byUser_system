@@ -1,13 +1,17 @@
 from datetime import timedelta
-from sqlalchemy import func, select
-from fastapi.security import OAuth2PasswordRequestForm
 
-from src.core.security import get_password_hash, verify_password, create_access_token, verify_access_token, password_hash, oauth2_scheme
+from src.core.security import get_password_hash, verify_password, create_access_token
 from src.config.settings import settings
 from src.modules.users.models import User
-from src.modules.users.schemas import UserRegisterRequest, UserLoginRequest, TokenResponse, UserResponse
+from src.modules.users.schemas import (
+    UserRegisterRequest,
+    UserLoginRequest,
+    TokenResponse,
+    UserResponse,
+)
 from src.modules.users.repositories import IUserRepository
-from src.modules.users.exceptions import UserAlreadyExistsError, InvalidCredentialsError, UserNotFoundError
+from src.modules.users.exceptions import UserAlreadyExistsError, InvalidCredentialsError
+
 
 class UserService:
     def __init__(self, user_repo: IUserRepository):
@@ -17,15 +21,15 @@ class UserService:
         existing = await self.user_repo.get_by_email(dto.email)
         if existing:
             raise UserAlreadyExistsError(dto.email)
-        
+
         user = User(
-            email = dto.email.lower(),
-            hashed_password= get_password_hash(dto.password)
+            email=dto.email.lower(),
+            hashed_password=get_password_hash(dto.password)
         )
 
         saved = await self.user_repo.create(user)
         return UserResponse.model_validate(saved)
-    
+
     async def authenticate_user(self, dto: UserLoginRequest) -> TokenResponse:
         user = await self.user_repo.get_by_email(dto.email)
         if not user or not verify_password(dto.password, user.hashed_password):
@@ -37,7 +41,6 @@ class UserService:
             expires_delta=access_token_expires
         )
         return TokenResponse(access_token=token)
-    
-    async def get_authenticated_user(self, user_id: str) ->UserResponse:
-        return await self.user_repo.get_by_id(user_id)
 
+    async def get_authenticated_user(self, user_id: str) -> UserResponse:
+        return await self.user_repo.get_by_id(user_id)

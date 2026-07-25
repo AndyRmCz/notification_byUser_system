@@ -9,11 +9,13 @@ from src.core.exceptions import BusinessException
 from src.modules.users.controllers import router as auth_router
 from src.modules.notifications.controllers import router as notification_router
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -22,6 +24,7 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan
 )
+
 
 # Exception handler translating  core BusinessException to proper HTTP outputs
 @app.exception_handler(BusinessException)
