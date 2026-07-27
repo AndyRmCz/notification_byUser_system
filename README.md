@@ -12,11 +12,6 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/AndyRmCz/notification_byUser_system/badge.svg)](https://coveralls.io/github/AndyRmCz/notification_byUser_system)
 
-### How to run locally coveralls
-
-```
-COVERALLS_REPO_TOKEN=XOfic96I7mC4pVcU9Yltdot9U8riRxE3Y npm run test:cov
-```
 
 ### Features
 

@@ -31,7 +31,7 @@ jobs:
           command: pip install pytest-cov coveralls
       - run:
           name: Run tests with coverage
-          command: python -m pytest --cov=src --cov-report=xml
+          command: COVERALLS_REPO_TOKEN=XOfic96I7mC4pVcU9Yltdot9U8riRxE3Y python -m pytest --cov=src --cov-report=xml
       - run:
           name: Upload coverage to Coveralls
           command: coveralls
