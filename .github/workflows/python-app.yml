@@ -58,3 +58,6 @@ jobs:
 
       - name: Run tests
         run: python -m pytest
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
