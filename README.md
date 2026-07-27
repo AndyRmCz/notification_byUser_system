@@ -6,6 +6,8 @@
 
 ### Badges
 
+[![Github Actions](https://github.com/AndyRmCz/notification_byUser_system/actions/workflows/python-app.yml/badge.svg)](https://github.com/AndyRmCz/notification_byUser_system/actions/workflows/python-app.yml)
+
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/AndyRmCz/notification_byUser_system/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/AndyRmCz/notification_byUser_system/tree/main)
 
 [![Coverage Status](https://coveralls.io/repos/github/yaritaft/cursor-backend-challenge/badge.svg)](https://coveralls.io/github/yaritaft/cursor-backend-challenge)
