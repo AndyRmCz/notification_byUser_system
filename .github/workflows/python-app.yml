@@ -57,7 +57,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Run tests
-        run: python -m pytest
+        run: python -m pytest --cov=src --cov-report=xml
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
